@@ -470,6 +470,25 @@ static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
       YGApplyLayoutToViewHierarchy(view.subviews[i], NO);
     }
   }
+    
+    if ([view isKindOfClass:UIScrollView.class]) {
+        YGApplyContentSizeToScrollView((UIScrollView *)view);
+    }
+}
+
+static void YGApplyContentSizeToScrollView(UIScrollView *scrollView)
+{
+    CGRect contentRect = CGRectZero;
+    for (NSUInteger i=0; i<scrollView.subviews.count; i++) {
+        UIView * subView = scrollView.subviews[i];
+        if (subView.isYogaEnabled && subView.yoga.isIncludedInLayout) {
+            contentRect = CGRectUnion(contentRect, subView.frame);
+        }
+    }
+    [scrollView setContentSize:(CGSize) {
+        .width = YGRoundPixelValue(contentRect.origin.x + contentRect.size.width),
+        .height = YGRoundPixelValue(contentRect.origin.y + contentRect.size.height)
+    }];
 }
 
 @end
