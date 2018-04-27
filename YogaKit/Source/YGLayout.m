@@ -388,7 +388,7 @@ static void YGAttachNodesFromViewHierachy(UIView *const view)
 
     NSMutableArray<UIView *> *subviewsToInclude = [[NSMutableArray alloc] initWithCapacity:view.subviews.count];
     for (UIView *subview in view.subviews) {
-      if (subview.yoga.isEnabled && subview.yoga.isIncludedInLayout) {
+      if (subview.isYogaEnabled && subview.yoga.isIncludedInLayout) {
         [subviewsToInclude addObject:subview];
       }
     }
@@ -431,6 +431,10 @@ static CGFloat YGRoundPixelValue(CGFloat value)
 static void YGApplyLayoutToViewHierarchy(UIView *view, BOOL preserveOrigin)
 {
   NSCAssert([NSThread isMainThread], @"Framesetting should only be done on the main thread.");
+    
+    if (!view.isYogaEnabled) {
+        return;
+    }
 
   const YGLayout *yoga = view.yoga;
 
